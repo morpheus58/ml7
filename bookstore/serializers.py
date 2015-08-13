@@ -10,6 +10,7 @@ class PricesSerializer(serializers.ModelSerializer):
         fields = ('book_type', 'price')
 
 class BooksSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     authors = serializers.StringRelatedField(many=True)
     prices = PricesSerializer(many=True)
     title = serializers.CharField(max_length=100)
@@ -20,7 +21,7 @@ class BooksSerializer(serializers.ModelSerializer):
     cover_img = serializers.URLField()
     class Meta:
         model = Books
-        fields = ('title', 'authors', 'publication_date',
+        fields = ('id', 'title', 'authors', 'publication_date',
                   'publisher', 'summary', 'prices', 'purchase_link', 'cover_img')
 
     def create(self, validated_data):
@@ -37,6 +38,7 @@ class BooksSerializer(serializers.ModelSerializer):
         author_data = validated_data.pop('author')
         price = instance.price
         author = instance.author
+        instance.id = validated_data.get('id', instance.id)
         instance.title = validated_data.get('title', instance.title)
         instance.publication_date = validated_data.get('publication_date', instance.publication_date)
         instance.publisher = validated_data.get('publisher', instance.publisher)
